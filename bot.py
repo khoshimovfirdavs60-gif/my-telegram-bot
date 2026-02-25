@@ -244,64 +244,63 @@ PART6_DATA = {
     "49": ["nuts", "tea", "rabbit", "employer", "salty", "ate"],
     "50": ["silence", "rabbits", "internet", "calls", "car", "university"]
 }
-bot = Bot(token=API_TOKEN)
+bot = Bot("8234203352:AAEms-xXd1ZvYqn1gpsU5oEaukYZNFHRIbc")
 dp = Dispatcher()
-
-
-@dp.message(Command("start"))
-async def cmd_start(message: types.Message):
-    await message.answer(
-        "🎧 **Listening Checker Bot**\n\n"
-        "Tekshirish uchun mashq va savol raqamini javob bilan yuboring.\n"
-        "Namuna: `1 1 A` (1-mashq, 1-savol, javob A)")
 
 user_sessions = {}
 
+@dp.message(Command("start"))
+async def cmd_start(message: Message):
+    await message.answer(
+        "🎧 **Multilevel Listening Checker Bot**\n\n"
+        "Savolni tanlash uchun masalan: `pt 6 1 1`\n"
+        "Keyin javobni o'zini yozasiz."
+    )
+
 @dp.message()
-async def check_answer(message: types.Message):
+async def main_handler(message: Message):
     user_id = message.from_user.id
     text = message.text.strip().lower()
     qismlar = text.split()
 
-    # 1. SAVOL TANLASH (Namuna: pt 6 1 1)
+    # 1. SAVOL TANLASH (pt 6 1 1)
     if len(qismlar) == 4 and qismlar[0] == "pt":
         try:
-            part_num = qismlar[1]
-            mashq_num = qismlar[2]
-            savol_idx = int(qismlar[3]) - 1
+            p_num = qismlar[1]
+            m_num = qismlar[2]
+            s_idx = int(qismlar[3]) - 1
 
-            # Qaysi partligini aniqlash va javobni olish
             correct_answer = None
-            if part_num == "1": correct_answer = PART1_DATA.get(mashq_num, [])[savol_idx]
-            elif part_num == "2": correct_answer = PART2_DATA.get(mashq_num, [])[savol_idx]
-            elif part_num == "3": correct_answer = PART3_DATA.get(mashq_num, [])[savol_idx]
-            elif part_num == "4": correct_answer = PART4_DATA.get(mashq_num, [])[savol_idx]
-            elif part_num == "5": correct_answer = PART5_DATA.get(mashq_num, [])[savol_idx]
-            elif part_num == "6": correct_answer = PART6_DATA.get(mashq_num, [])[savol_idx]
+            if p_num == "1": correct_answer = PART1_DATA.get(m_num, [])[s_idx]
+            elif p_num == "2": correct_answer = PART2_DATA.get(m_num, [])[s_idx]
+            elif p_num == "3": correct_answer = PART3_DATA.get(m_num, [])[s_idx]
+            elif p_num == "4": correct_answer = PART4_DATA.get(m_num, [])[s_idx]
+            elif p_num == "5": correct_answer = PART5_DATA.get(m_num, [])[s_idx]
+            elif p_num == "6": correct_answer = PART6_DATA.get(m_num, [])[s_idx]
 
             if correct_answer:
-                # Javobni xotiraga saqlaymiz
                 user_sessions[user_id] = correct_answer.lower()
-                await message.answer(f"❓ Part {part_num}, {mashq_num}-mashq, {savol_idx+1}-savol tanlandi.\n\nEndi javobni yozing:")
+                await message.answer(f"❓ Part {p_num}, {m_num}-mashq, {s_idx+1}-savol tanlandi.\nJavobni yozing:")
             else:
-                await message.answer("❌ Bunday mashq yoki savol topilmadi.")
-        except (IndexError, KeyError, ValueError):
-            await message.answer("❌ Xato! Namuna: pt 6 1 1")
+                await message.answer("❌ Bunday mashq topilmadi.")
+        except:
+            await message.answer("⚠️ Namuna: `pt 6 1 1`")
         return
 
-    # 2. JAVOBNI TEKSHIRISH (Foydalanuvchi so'zni o'zini yozganda)
+    # 2. JAVOBNI TEKSHIRISH
     if user_id in user_sessions:
         togri_javob = user_sessions[user_id]
-        
         if text == togri_javob:
             await message.answer("✅ To'g'ri!")
-            # Javobni topgandan keyin sessiyani tozalaymiz
             del user_sessions[user_id]
         else:
-            await message.answer("❌ Xato! Qayta urinib ko'ring yoki boshqa savol tanlang.")
+            await message.answer("❌ Xato! Qayta urinib ko'ring.")
     else:
-        # Agar savol tanlamasdan pt deb yozsa
-        if text.startswith("pt"):
-            await message.answer("⚠️ Savolni tanlash uchun masalan: `pt 6 1 1` deb yozing.")
-        elif not text.startswith("/"):
-            await message.answer("⚠️ Avval savolni tanlang. Namuna: `pt 6 1 1` (Part 6, 1-mashq, 1-savol)")
+        if not text.startswith("/"):
+            await message.answer("⚠️ Avval savolni tanlang. Namuna: `pt 6 1 1`")
+
+async def main():
+    await dp.start_polling(bot)
+
+if __name__ == "__main__":
+    asyncio.run(main())

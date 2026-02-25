@@ -288,7 +288,6 @@ async def main_handler(message: Message):
     else:
         if not text.startswith("/"):
             await message.answer("⚠️ Avval savolni tanlang. Namuna: `pt 6 1 1`")
-
 async def main():
     await dp.start_polling(bot)
 

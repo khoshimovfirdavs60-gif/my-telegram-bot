@@ -265,18 +265,27 @@ async def main_handler(message: Message):
 
     # 1. SAVOL TANLASH (pt 6 1 1)
     if len(qismlar) == 4 and qismlar[0] == "pt":
-        try:
-            p_num = qismlar[1]
-            m_num = qismlar[2]
-            s_idx = int(qismlar[3]) - 1
+       try:
+            part_num = qismlar[1] # Bu "6" bo'ladi (tekst)
+            mashq_num = qismlar[2] # Bu "1" bo'ladi (tekst)
+            savol_idx = int(qismlar[3]) - 1
 
             correct_answer = None
-            if p_num == "1": correct_answer = PART1_DATA.get(m_num, [])[s_idx]
-            elif p_num == "2": correct_answer = PART2_DATA.get(m_num, [])[s_idx]
-            elif p_num == "3": correct_answer = PART3_DATA.get(m_num, [])[s_idx]
-            elif p_num == "4": correct_answer = PART4_DATA.get(m_num, [])[s_idx]
-            elif p_num == "5": correct_answer = PART5_DATA.get(m_num, [])[s_idx]
-            elif p_num == "6": correct_answer = PART6_DATA.get(m_num, [])[s_idx]
+            
+            # Bu yerda .get(mashq_num) ishlatamiz, chunki mashq_num allaqachon tekst
+            if part_num == "1": correct_answer = PART1_DATA.get(mashq_num, [])[savol_idx]
+            elif part_num == "2": correct_answer = PART2_DATA.get(mashq_num, [])[savol_idx]
+            elif part_num == "3": correct_answer = PART3_DATA.get(mashq_num, [])[savol_idx]
+            elif part_num == "4": correct_answer = PART4_DATA.get(mashq_num, [])[savol_idx]
+            elif part_num == "5": correct_answer = PART5_DATA.get(mashq_num, [])[savol_idx]
+            elif part_num == "6": correct_answer = PART6_DATA.get(mashq_num, [])[savol_idx]
+
+            if correct_answer:
+                # Javobni xotiraga saqlaymiz
+                user_sessions[user_id] = correct_answer.lower()
+                await message.answer(f"✅ Part {part_num}, {mashq_num}-mashq, {savol_idx+1}-savol tanlandi.\n\nEndi javobni yozing:")
+            else:
+                await message.answer("❌ Xato: Bunday mashq yoki savol bazada topilmadi.")
 
             if correct_answer:
                 user_sessions[user_id] = correct_answer.lower()
@@ -303,4 +312,5 @@ async def main():
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
+    import asyncio
     asyncio.run(main())

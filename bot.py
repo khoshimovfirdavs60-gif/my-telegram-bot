@@ -192,6 +192,7 @@ PART5_DATA = {
     "47": ["B", "C", "B", "C", "A", "B"], "48": ["C", "B", "A", "B", "C", "B"],
     "49": ["A", "A", "B", "C", "B", "C"], "50": ["A", "B", "C", "A", "C", "A"]
 }
+PART6_DATA = {
 "1": ["puzzle", "confusion", "meditation", "stone", "coins", "tree"],
     "2": ["business", "western", "sahara", "alps", "level", "degree"],
     "3": ["newspaper", "readers", "fishing", "market", "children", "channels"],

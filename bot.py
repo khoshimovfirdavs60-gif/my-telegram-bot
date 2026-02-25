@@ -244,18 +244,15 @@ PART6_DATA = {
     "49": ["nuts", "tea", "rabbit", "employer", "salty", "ate"],
     "50": ["silence", "rabbits", "internet", "calls", "car", "university"]
 }
-bot = Bot("8234203352:AAEms-xXd1ZvYqn1gpsU5oEaukYZNFHRIbc")
+API_TOKEN = "8234203352:AAEms-xXd1ZvYqn1gpsU5oEaukYZNFHRIbc"
+bot = Bot(token=API_TOKEN)
 dp = Dispatcher()
 
 user_sessions = {}
 
 @dp.message(Command("start"))
 async def cmd_start(message: Message):
-    await message.answer(
-        "🎧 **Multilevel Listening Checker Bot**\n\n"
-        "Savolni tanlash uchun masalan: `pt 6 1 1`\n"
-        "Keyin javobni o'zini yozasiz."
-    )
+    await message.answer("🎧 **Listening Checker Bot** tayyor!\n\nSavolni tanlang: `pt 6 1 1` (Part 6, 1-mashq, 1-savol)")
 
 @dp.message()
 async def main_handler(message: Message):
@@ -263,43 +260,27 @@ async def main_handler(message: Message):
     text = message.text.strip().lower()
     qismlar = text.split()
 
-    # 1. SAVOL TANLASH (pt 6 1 1)
+    # 1. SAVOL TANLASH
     if len(qismlar) == 4 and qismlar[0] == "pt":
-       try:
-            part_num = qismlar[1] # Bu "6" bo'ladi (tekst)
-            mashq_num = qismlar[2] # Bu "1" bo'ladi (tekst)
-            savol_idx = int(qismlar[3]) - 1
-
-            correct_answer = None
+        try:
+            p, m, s = qismlar[1], qismlar[2], int(qismlar[3]) - 1
+            data_map = {"1": PART1_DATA, "2": PART2_DATA, "3": PART3_DATA, 
+                        "4": PART4_DATA, "5": PART5_DATA, "6": PART6_DATA}
             
-            # Bu yerda .get(mashq_num) ishlatamiz, chunki mashq_num allaqachon tekst
-            if part_num == "1": correct_answer = PART1_DATA.get(mashq_num, [])[savol_idx]
-            elif part_num == "2": correct_answer = PART2_DATA.get(mashq_num, [])[savol_idx]
-            elif part_num == "3": correct_answer = PART3_DATA.get(mashq_num, [])[savol_idx]
-            elif part_num == "4": correct_answer = PART4_DATA.get(mashq_num, [])[savol_idx]
-            elif part_num == "5": correct_answer = PART5_DATA.get(mashq_num, [])[savol_idx]
-            elif part_num == "6": correct_answer = PART6_DATA.get(mashq_num, [])[savol_idx]
-
-            if correct_answer:
-                # Javobni xotiraga saqlaymiz
+            res = data_map.get(p, {}).get(m, [])
+            if s >= 0 and s < len(res):
+                correct_answer = res[s]
                 user_sessions[user_id] = correct_answer.lower()
-                await message.answer(f"✅ Part {part_num}, {mashq_num}-mashq, {savol_idx+1}-savol tanlandi.\n\nEndi javobni yozing:")
+                await message.answer(f"✅ Part {p}, Mashq {m}, Savol {s+1} tanlandi.\nJavobni yozing:")
             else:
-                await message.answer("❌ Xato: Bunday mashq yoki savol bazada topilmadi.")
-
-            if correct_answer:
-                user_sessions[user_id] = correct_answer.lower()
-                await message.answer(f"❓ Part {p_num}, {m_num}-mashq, {s_idx+1}-savol tanlandi.\nJavobni yozing:")
-            else:
-                await message.answer("❌ Bunday mashq topilmadi.")
-        except:
-            await message.answer("⚠️ Namuna: `pt 6 1 1`")
+                await message.answer("❌ Bazada bunday savol topilmadi.")
+        except Exception:
+            await message.answer("⚠️ Namuna: pt 6 1 1")
         return
 
     # 2. JAVOBNI TEKSHIRISH
     if user_id in user_sessions:
-        togri_javob = user_sessions[user_id]
-        if text == togri_javob:
+        if text == user_sessions[user_id]:
             await message.answer("✅ To'g'ri!")
             del user_sessions[user_id]
         else:

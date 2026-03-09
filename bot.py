@@ -2,6 +2,7 @@ from keep_alive import keep_alive
 import asyncio
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
+from aiogram.types import Message 
 
 # Diqqat! Token qo'shtirnoq ichida bo'lishi shart
 API_TOKEN = '8234203352:AAEms-xXd1ZvYqn1gpsU5oEaukYZNFHRIbc'

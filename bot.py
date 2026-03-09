@@ -281,7 +281,7 @@ async def main_handler(message: Message):
 
     # 2. JAVOBNI TEKSHIRISH
     if user_id in user_sessions:
-        if text == user_sessions[user_id]:
+        if text.lower().strip() in user_sessions[user_id]:
             await message.answer("✅ To'g'ri!")
             del user_sessions[user_id]
         else:
